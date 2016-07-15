@@ -25,7 +25,6 @@ public class Display {
     private GpioPinDigitalOutput rstPin, dcPin;
     private I2CDevice i2c;
     private SpiDevice spi;
-    private int fd;
     private byte[] buffer;
 
     /**
@@ -61,17 +60,11 @@ public class Display {
      * @param rstPin  Reset pin
      * @see GpioFactory#getInstance() GpioController instance factory
      * @see com.pi4j.io.i2c.I2CFactory#getInstance(int) I2C bus factory
-     * @throws ReflectiveOperationException Thrown if I2C handle is not accessible
      * @throws IOException                  Thrown if the bus can't return device for specified address
      */
-    public Display(int width, int height, GpioController gpio, I2CBus i2c, int address, Pin rstPin) throws ReflectiveOperationException, IOException {
+    public Display(int width, int height, GpioController gpio, I2CBus i2c, int address, Pin rstPin) throws IOException {
         this(width, height, true, gpio, rstPin);
-
         this.i2c = i2c.getDevice(address);
-
-        Field f = this.i2c.getClass().getDeclaredField("fd");
-        f.setAccessible(true);
-        this.fd = f.getInt(this.i2c);
     }
 
     /**
@@ -102,7 +95,7 @@ public class Display {
      * @see GpioFactory#getInstance() GpioController instance factory
      * @see com.pi4j.io.i2c.I2CFactory#getInstance(int) I2C bus factory
      */
-    public Display(int width, int height, GpioController gpio, I2CBus i2c, int address) throws ReflectiveOperationException, IOException {
+    public Display(int width, int height, GpioController gpio, I2CBus i2c, int address) throws IOException {
         this(width, height, gpio, i2c, address, null);
     }
 
@@ -217,8 +210,11 @@ public class Display {
      */
     public void data(byte[] data) {
         if (this.usingI2C) {
-            for (int i = 0; i < data.length; i += 16) {
-                this.i2cWrite(0x40, data[i]);
+            try {
+                this.i2c.write(0x40, data, 0, data.length);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
             }
         } else {
             this.dcPin.setState(true);
@@ -467,6 +463,11 @@ public class Display {
 
     private void i2cWrite(int register, int value) {
         value &= 0xFF;
-        I2C.wiringPiI2CWriteReg8(this.fd, register, value);
+        try {
+            this.i2c.write(register,(byte) value);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
