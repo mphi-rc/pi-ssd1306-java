@@ -6,6 +6,20 @@ Based on [Adafruit_Python_SSD1306](https://github.com/adafruit/Adafruit_Python_S
 
 __You'll need [Pi4J](http://pi4j.com/) library.__
 
+## Build a JAR file with maven
+
+You need [Maven](https://maven.apache.org/) to use the following procedure. Perform the following in the project root folder. 
+ 
+ 1. Create the JAR file with the following command: `mvn clean package`
+ 1. Start example: `sudo java -classpath .:/opt/pi4j/lib/'*' -jar target/ssd1306-0.0.1-SNAPSHOT.jar`
+
+This will execute class ***Pixels*** which tries to draw a sample image via SPI on the OLED.
+In case you want to try the I2C bus version (PixelsI2c), execute the following command:
+
+`sudo java -classpath .:./target/ssd1306-0.0.1-SNAPSHOT.jar:/opt/pi4j/lib/'*' eu.ondryaso.ssd1306.examples.PixelsI2c`
+
+For performance reasons, it is advised to build the JAR on a PC and copy the file afterwards to the Raspberry PI.
+In case the commands are executed from the same folder where the JAR is located, the `target/` has to be omitted. 
 
 ## Connecting
 You just have to connect your display to the Raspberry Pi SPI (or I2C) pins. 
