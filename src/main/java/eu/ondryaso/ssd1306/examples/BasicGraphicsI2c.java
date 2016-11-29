@@ -22,7 +22,7 @@ public class BasicGraphicsI2c {
         disp.begin();
         // Init the display
 
-        Image i = ImageIO.read(BasicGraphics.class.getResourceAsStream("lord.png"));
+        Image i = ImageIO.read(BasicGraphicsI2c.class.getResourceAsStream("lord.png"));
         disp.getGraphics().setColor(Color.WHITE);
         disp.getGraphics().drawImage(i, 0, 0, null);
         disp.getGraphics().setFont(new Font("Monospaced", Font.PLAIN, 10));
