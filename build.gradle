@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.pi4j:pi4j-core:1.2'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'eu.ondryaso.ssd1306'
+            artifactId = 'ssd1306'
+            version = '0.1.0'
+            from components.java
+        }
+    }
+}
